@@ -43,4 +43,12 @@ export class BasketService {
     getBasket(): AddToBasketDto[] {
         return this.basket;
     }
+
+    totalPrice(): number {
+        let total: number = 0;
+        this.basket.map(el => {
+            total += (this.shopService.getPriceOfItem(el.name) * el.quantity * 1.23)
+        })
+        return Number(total.toFixed(2))
+    }
 }

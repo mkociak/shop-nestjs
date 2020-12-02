@@ -17,7 +17,9 @@ export class BasketController {
     }
 
     @Get('/basket/total-price')
-
+    totalPrice() {
+        return this.basketService.totalPrice();
+    }
 
     @Post('/basket')
     addToBasket(
