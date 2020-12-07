@@ -1,17 +1,17 @@
-import {Body, Inject, Injectable} from '@nestjs/common';
+import { Body, forwardRef, Inject, Injectable } from "@nestjs/common";
 import {AddToBasketDto} from "./dto/add-to-basket.dto";
-import {AddToBasketInterface} from "../interface/add-to-basket.interface";
+import { AddToBasketInterface, RemoveFromBasketInterface } from "../interface/add-to-basket.interface";
 import {ShopService} from "../shop/shop.service";
 
 @Injectable()
 export class BasketService {
 
     constructor(
-        @Inject(ShopService) private shopService: ShopService
+        @Inject(forwardRef(() => ShopService)) private shopService: ShopService
     ) {
     }
 
-    basket: AddToBasketDto[] = [];
+    private basket: AddToBasketDto[] = [];
     addToBasket(addToBasket: AddToBasketDto): AddToBasketInterface {
         if(
             typeof addToBasket.name !== 'string' ||
@@ -30,10 +30,11 @@ export class BasketService {
 
     }
 
-    deleteFromBasket(id: string): AddToBasketInterface {
+    deleteFromBasket(id: string): RemoveFromBasketInterface {
+        const {basket} = this;
         const index = parseInt(id);
-        if (this.basket[index] !== undefined) {
-            this.basket.splice(index, 1);
+        if (basket[index] !== undefined) {
+            basket.splice(index, 1);
             return {isSuccess: true}
         } else {
             return {isSuccess: false}
@@ -50,5 +51,9 @@ export class BasketService {
             total += (this.shopService.getPriceOfItem(el.name) * el.quantity * 1.23)
         })
         return Number(total.toFixed(2))
+    }
+
+    countPromo():number {
+        return this.totalPrice() > 10 ? 1 : 0;
     }
 }

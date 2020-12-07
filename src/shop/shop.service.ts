@@ -1,22 +1,28 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import {GetAllItemsInterface} from "../interface/get-all-items.interface";
+import { BasketService } from "../basket/basket.service";
 
 @Injectable()
 export class ShopService {
+
+  constructor(
+    @Inject(forwardRef(() => BasketService)) private basketService: BasketService
+  ) {
+  }
 
     getAllItems(): GetAllItemsInterface[] {
         return (
             [
                 {
-                    name: 'Chipsy',
+        name: 'Chipsy',
                     description: 'Pyszne cziperki, mniam mniam',
-                    netPrice: 3.99,
+                    netPrice: 3.99 - this.basketService.countPromo(),
                     available: 5
                 },
                 {
                     name: 'Piwo',
                     description: 'Zdrowa bo dobre',
-                    netPrice: 4.99,
+                    netPrice: 4.99 - this.basketService.countPromo(),
                     available: 12
                 },
                 {
